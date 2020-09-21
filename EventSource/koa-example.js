@@ -99,4 +99,5 @@ let currentThemeState = {
 
 app.listen(PORT, () => {
   console.log("Listening on port: " + PORT);
+  console.log("请在浏览器访问：\n", `http://localhost:${PORT}`);
 });

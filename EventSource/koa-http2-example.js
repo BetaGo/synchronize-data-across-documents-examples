@@ -105,10 +105,12 @@ const options = {
   cert: fs.readFileSync(path.resolve(__dirname, "certificate", "server.crt")),
 };
 
+// 启用 HTTP/2
 http2.createSecureServer(options, app.callback()).listen(PORT, (err) => {
   if (err) {
     throw new Error(err);
   }
 
   console.log("Listening on port: " + PORT);
+  console.log("请在浏览器访问：\n", `https://localhost:${PORT}`);
 });

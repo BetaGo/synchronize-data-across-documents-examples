@@ -24,7 +24,11 @@ function serverSentEvents(event, data) {
   return `event:${event}\ndata: ${data}\n\n`;
 }
 
+// GET /events 的中间件
 function eventsHandler(req, res, next) {
+  /**
+   * 发送事件流时，服务器端发送的响应内容应该使用值为 `text/event-stream` 的 MIME 类型。
+   */
   const headers = {
     "Content-Type": "text/event-stream",
     Connection: "keep-alive",
@@ -34,25 +38,31 @@ function eventsHandler(req, res, next) {
   res.write(
     serverSentEvents("theme-change", JSON.stringify(currentThemeState))
   );
+
+  // 记录下创建了链接的客户端，稍后进行遍历，将更新发送给每个客户端。
   const clientId = Date.now();
   const newClient = {
     id: clientId,
     res,
   };
   clients.push(newClient);
+
+  // 当客户端断开连接时，将其从记录中移除
   req.on("close", () => {
     console.log(`${clientId} Connection closed`);
     clients = clients.filter((c) => c.id !== clientId);
   });
 }
 
+// 将 `theme-change` 事件发送给所有建立了持久化连接的客户端
 function sendEventsToAll(newTheme) {
   clients.forEach((c) =>
     c.res.write(serverSentEvents("theme-change", JSON.stringify(newTheme)))
   );
 }
 
-async function changeTheme(req, res, next) {
+// POST /change-theme 的中间件
+function changeTheme(req, res, next) {
   currentThemeState = req.body;
   res.json(currentThemeState);
   return sendEventsToAll(currentThemeState);
@@ -70,4 +80,5 @@ let currentThemeState = {
 
 app.listen(PORT, () => {
   console.log("Listening on port: " + PORT);
+  console.log("请在浏览器访问：\n", `http://localhost:${PORT}`);
 });
