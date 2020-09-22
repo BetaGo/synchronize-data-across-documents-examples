@@ -13,7 +13,6 @@ function changeTheme(theme) {
   currentTheme = theme;
   document.body.className = currentTheme;
   themeNameElement.innerHTML = currentTheme;
-  localStorage.setItem("theme", theme);
 }
 
 newTabBtn.addEventListener("click", () => {
@@ -24,6 +23,7 @@ newTabBtn.addEventListener("click", () => {
 switchThemeBtn.addEventListener("click", () => {
   const newTheme = currentTheme === "light" ? "dark" : "light";
   changeTheme(newTheme);
+  localStorage.setItem("theme", newTheme);
 });
 
 addIframeBtn.addEventListener("click", () => {
