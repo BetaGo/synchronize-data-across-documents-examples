@@ -6,6 +6,8 @@ const newTabBtn = document.querySelector("#newTabBtn");
 const switchThemeBtn = document.querySelector("#switchThemeBtn");
 const addIframeBtn = document.querySelector("#addIframeBtn");
 
+changeTheme(currentTheme);
+
 function changeTheme(theme) {
   if (theme === currentTheme) return;
   currentTheme = theme;

@@ -53,12 +53,13 @@ const newTabBtn = document.querySelector("#newTabBtn");
 const switchThemeBtn = document.querySelector("#switchThemeBtn");
 const addIframeBtn = document.querySelector("#addIframeBtn");
 
+changeTheme(currentTheme);
+
 function changeTheme(theme) {
   if (theme === currentTheme) return;
   currentTheme = theme;
   document.body.className = currentTheme;
   themeNameElement.innerHTML = currentTheme;
-  emitThemeChangeEvent();
 }
 
 newTabBtn.addEventListener("click", () => {
@@ -69,6 +70,7 @@ newTabBtn.addEventListener("click", () => {
 switchThemeBtn.addEventListener("click", () => {
   const newTheme = currentTheme === "light" ? "dark" : "light";
   changeTheme(newTheme);
+  emitThemeChangeEvent();
   emitThemeChangeEventToParent();
 });
 
@@ -82,9 +84,11 @@ addIframeBtn.addEventListener("click", () => {
 window.addEventListener("message", (e) => {
   if (e.data && e.data.messageSource === "SWITCH_THEME") {
     changeTheme(e.data.theme);
+    emitThemeChangeEvent();
   }
   if (e.data && e.data.messageSource === "WISH_TO_SWITCH_THEME") {
     changeTheme(e.data.theme);
+    emitThemeChangeEvent();
     const hasParent = window.parent !== window || window.opener;
     if (hasParent) {
       emitThemeChangeEventToParent();
