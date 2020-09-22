@@ -6,7 +6,9 @@ const newTabBtn = document.querySelector("#newTabBtn");
 const switchThemeBtn = document.querySelector("#switchThemeBtn");
 const addIframeBtn = document.querySelector("#addIframeBtn");
 
-changeTheme(localStorage.getItem("theme") || currentTheme);
+changeTheme(currentTheme);
+
+const themeChangeChannel = new BroadcastChannel("theme-change");
 
 function changeTheme(theme) {
   if (theme === currentTheme) return;
@@ -22,7 +24,7 @@ newTabBtn.addEventListener("click", () => {
 switchThemeBtn.addEventListener("click", () => {
   const newTheme = currentTheme === "light" ? "dark" : "light";
   changeTheme(newTheme);
-  localStorage.setItem("theme", newTheme);
+  themeChangeChannel.postMessage(newTheme);
 });
 
 addIframeBtn.addEventListener("click", () => {
@@ -32,8 +34,6 @@ addIframeBtn.addEventListener("click", () => {
 });
 
 // 监听主题的变化
-window.addEventListener("storage", (e) => {
-  if (e.key === "theme" && e.newValue) {
-    changeTheme(e.newValue);
-  }
+themeChangeChannel.addEventListener("message", (e) => {
+  changeTheme(e.data);
 });
